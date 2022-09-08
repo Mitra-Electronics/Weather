@@ -1,32 +1,36 @@
-from tkinter import Canvas, Tk, Label, Entry
+from tkinter import Canvas, Tk, Label, Entry, messagebox
 from PIL import Image
 from PIL.ImageTk import PhotoImage
 from os.path import join
 from requests import get
+from requests.exceptions import ConnectionError
 from time import strftime, gmtime
 
 def get_weather(canvas):
     city = text_field.get()
-    json_data = get("https://api.openweathermap.org/data/2.5/weather?q="+city+"&appid=06c921750b9a82d8f5d1294e1586276f&units=metric").json()
-    condition = json_data["weather"][0]["main"]
-    place = json_data["name"]
-    temp = json_data["main"]["temp"]
-    feels_like = json_data["main"]["feels_like"]
-    pressure = json_data["main"]["pressure"]
-    humidity = json_data["main"]["humidity"]
-    wind = json_data["wind"]["speed"]
-    sunrise = strftime("%I:%M:%S", gmtime(json_data["sys"]["sunrise"] + json_data["timezone"]))
-    sunset = strftime("%I:%M:%S", gmtime(json_data["sys"]["sunset"] + json_data["timezone"]))
+    try:
+        json_data = get("https://api.openweathermap.org/data/2.5/weather?q="+city+"&appid=06c921750b9a82d8f5d1294e1586276f&units=metric").json()
+        condition = json_data["weather"][0]["main"]
+        place = json_data["name"]
+        temp = json_data["main"]["temp"]
+        feels_like = json_data["main"]["feels_like"]
+        pressure = json_data["main"]["pressure"]
+        humidity = json_data["main"]["humidity"]
+        wind = json_data["wind"]["speed"]
+        sunrise = strftime("%I:%M:%S", gmtime(json_data["sys"]["sunrise"] + json_data["timezone"]))
+        sunset = strftime("%I:%M:%S", gmtime(json_data["sys"]["sunset"] + json_data["timezone"]))
 
-    final_info = condition + "\n" + str(temp) + "°C" 
-    final_data = f"\n\nFeels Like: {feels_like} °C\nPressure: {pressure}\nHumidity: {humidity}%\nWind Speed: {wind}km/h\nSunrise: {sunrise}\nSunset: {sunset}"
-    imag = Image.open(join("assets", json_data["weather"][0]["icon"]+".png"))
-    img = PhotoImage(imag.resize((100, 100)))
-    img1.configure(image=img)
-    img1.image = img
-    place_label.config(text=place)
-    condition_label.config(text = final_info)
-    label2.config(text = final_data)
+        final_info = condition + "\n" + str(temp) + "°C" 
+        final_data = f"\n\nFeels Like: {feels_like} °C\nPressure: {pressure}\nHumidity: {humidity}%\nWind Speed: {wind}km/h\nSunrise: {sunrise}\nSunset: {sunset}"
+        imag = Image.open(join("assets", json_data["weather"][0]["icon"]+".png"))
+        img = PhotoImage(imag.resize((100, 100)))
+        img1.configure(image=img)
+        img1.image = img
+        place_label.config(text=place)
+        condition_label.config(text = final_info)
+        label2.config(text = final_data)
+    except ConnectionError:
+        messagebox.showerror(title="No Internet", message="No Internet Connection. Please make sure that you are connected to the internet in order for the app to work.")
 
 
 tk = Tk()
