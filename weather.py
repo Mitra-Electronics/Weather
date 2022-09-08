@@ -9,7 +9,7 @@ from time import strftime, gmtime
 def get_weather(canvas):
     city = text_field.get()
     try:
-        json_data = get("https://api.openweathermap.org/data/2.5/weather?q="+city+"&appid=06c921750b9a82d8f5d1294e1586276f&units=metric").json()
+        json_data = get(f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid=06c921750b9a82d8f5d1294e1586276f&units=metric").json()
         condition = json_data["weather"][0]["main"]
         place = json_data["name"]
         temp = json_data["main"]["temp"]
